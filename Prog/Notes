@@ -1,0 +1,190 @@
+* In linux, the directory structure starts from root.
+* In linux everything is a file.
+* Types of files: * Regular file.
+		  * Directory
+		  * Block Device
+		  * Character
+		  * Socket
+		  * Link
+		  * pipe(FIFO)
+
+* which <command> to print the path of <command>
+
+
+Directory Structure:
+1st charachter in permission string:
+* Types of files: * Regular file : -
+		  * Directory	 : d
+		  * Block Device : b
+		  * Character    : c
+		  * Socket	 : s
+		  * Link	 : l
+		  * pipe(FIFO)	 : f
+
+/ : 1s directory.
+/boot: booting related files.
+/bin: executables of all commands
+/dev: all device drivers and related files.
+/etc: contains all configuration files for all services on ubuntu like ssh.
+/home: Home directories of all the users except the root user.
+	home of root user is created as /root.
+/lib: Dynamic link libraries.  ------
+				    *----- 2 different lib files for backward compatibility.
+/lib64: Dynamic link libraries.------
+/media: Interface for creating mount point for attaching guest file system to host file system(Pendrive to laptop). AFter attaching i.e. mounting pendrive to system a different mount point(directory)   	  is created in this direcotry.
+/mnt: for explict mounting of file systems.
+/opt: To install softwares which are required temporarily and need not be in system forever.
+/proc: Contains directories for each process at runtime. This directories aexists as long as the process runs.
+/sbin: executables of previlaged commands.
+
+Commands- stat and lstat give metadata of a file.
+env check envirnment  variables
+shreyas@jarvis:~$ sudo su
+sudo: unable to resolve host jarvis: Connection refused
+[sudo] password for shreyas: 
+root@jarvis:/home/shreyas# adduser
+adduser: Only one or two names allowed.
+root@jarvis:/home/shreyas# adduser boo
+Adding user `boo' ...
+Adding new group `boo' (1001) ...
+Adding new user `boo' (1001) with group `boo' ...
+Creating home directory `/home/boo' ...
+Copying files from `/etc/skel' ...
+Enter new UNIX password: 
+Retype new UNIX password: 
+passwd: password updated successfully
+Changing the user information for boo
+Enter the new value, or press ENTER for the default
+	Full Name []: boo chakradeo
+	Room Number []: 2
+	Work Phone []: 876
+	Home Phone []: 123123
+	Other []: 12313
+Is the information correct? [Y/n] y
+root@jarvis:/home/shreyas# ^C
+***********************
+root@jarvis:/etc# grep boo /etc/passwd
+boo:x:1001:1001:boo chakradeo,2,876,123123,12313:/home/boo:/bin/bash
+root@jarvis:/etc# ^C
+In the above command result: 1st 1001: User ID and 2nd 1001: GroupID
+/etc/passwd: Database of UNIX for users.	
+	     UserID: Primary Key
+boo:x:1001:1001:boo chakradeo,2,876,123123,12313:/home/boo:/bin/bash
+ |  |  |    |    |___________________________|        |        |
+ |  |  |    |		       |                      |        | 
+ |  | UID  GID           User  Information    Home Directory   |
+U_  |                                                         Type of shell assigned to user
+name|
+    |
+    password
+
+*****************
+echo $SHELL
+/bin/bash
+****************
+touch: creates empty file.
+
+file filename gives file type
+ code.c --------------------> code.h------------------->code.asm----------->.out
+        preprocessor checked         gcc convert to asm         object code
+assembly code is dividied into 3 sections  _____________
+                                          | text        |     instructions
+                                          | data        |     uninitialized static variables  and  block started symbol, harcoded strings, local global static and
+                                          |symbol table |     varname, virtual address, ini value, scope, function name
+                                          ---------------
+linker takes obj file as ip and adds Operating System specific header on program file, can process multiple files at a time
+If 2 files are compiled at once, linker creates a new file containing text data and symbol tables of both files, and add OS specific primary header
+complier is harware/architectuer specific, linker is OS specific.
+Libraries are also linked by linker
+whichever libraries are required are stored in primary header
+header contains magic number (OS specific)
+Linker is part of OS
+In RAM, text data and stack of a program is scattered, its info is kept in page table. It can access the whole thing at a same time
+
+____________________________________
+|		   |               RAM|
+|		   |   Text        ---|
+|		   |                  |
+|  OS            |       Data       |
+|		   |                  |
+|		   |           Stack  |
+|		   |                  |
+_____________________________________
+
+
+
+
+command line arguments
+ _____
+|     |
+|data |
+|_____|
+|     |heap
+|_____|
+|_____|virtual layer to detect memory limits
+|     |stack top     stack uses to control flow of program
+|argv |
+|argc |
+      |stack
+|-----|
+|text |
+|_____|
+
+
+command line arguments treated as charater array
+
+./a.out 1 2 "a b"
+|   .   |  /  |  a  |  .  |  o  |  u  |  t  |  \0  |1|  \0  |  2  |  \0  |  a  | |  b  |\0|     datatype is char
+   100    101   102   103   104   5     6      7    8   9      10    11    12   13  14   15
+array 2- next array contains addresses of each token     datatye is char*
+| 100 | 108 | 110 | 112 | 115 |
+  200   204   208   212   216
+hence main contains(char *argc, char **argv, env)
+argc contains array 2 numbers stored in 100 array
+argv contains array 2s addresses starting from 200
+
+linker changes virtual address when 2 files try to use same virtual space. it adds address of entry point function in primary header(for ex Main function)
+each application thinks that it is the only process running at a time, and thinks that it can use the whole virtual memory
+ram is divided into pages, and disk is divided into blocks
+each process has separate page tables for Data, Text and Stack
+Page table is contained in OS part of memory
+There is another table - Per Process Table, containing multiple instances of a single program
+
+loader checks whether executible is present on OS
+
+college roll number can be attributed to virtual address, university roll number can be attributed to physical RAM
+ some private data of process is with kernel to control the process
+ Environment Variable is Key value pair
+ Environment Variable array will always contain minimum one entry which is NULL ( terminating character)
+ 
+ To check assembly code for cpp, g++ name.cpp -save-temps
+ then ls
+ open name.s
+ to check libraries, open name.ii
+ -save-temps
+linker address      ld -lc -dynamic-linker /lib64/ld-linux.so.2 Mymain.o -e mymain -o /tmp/a.out
+ ELF executable linkable file
+ 
+*** calling conventions 
+for passing command lines through Netbeans or Eclipse, change setting.
+When application is run using Build project, its the same as command line.
+
+
+while running program, -c for command line, -e for environment variables
+
+***RFC - Request for Comment***
+Versioning Control
+
+ 2001  git clonehttps://github.com/Sarvesh-Chakradeo/LSP.git
+git status
+git add filename
+git status
+git config --global user.name "chakradeokaustubh@gmail.com"
+ git config --global user.email "chakradeokaustubh@gmail.com"
+git commit Prog -m "Intitial commit for C prerequisite programs"
+git push origin master
+
+while using multithreading, include contains pthrad library used while compiling the program
+gcc thread.c -lpthread links pthread library while link time(just before run time)
+
+
